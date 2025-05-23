@@ -3,7 +3,7 @@ import { createHistory, getHistoryByUser } from '../services/history.services';
 
 export const createHistoryController = async (req: Request, res: Response) => {
   try {
-    const { plant_id, plant_name } = req.body;
+    const { plant_id, plant_name , img_url } = req.body;
     const userId = Number(req.user?.id);
 
     if (!plant_id || !plant_name) {
@@ -14,7 +14,7 @@ export const createHistoryController = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Invalid or missing user ID from request.' });
     }
 
-    const history = await createHistory(userId, plant_id, plant_name);
+    const history = await createHistory(userId, plant_id, plant_name, img_url);
 
     return res.status(201).json({
       message: 'History entry created successfully.',

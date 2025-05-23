@@ -5,7 +5,8 @@ const prisma = new PrismaClient();
 export const createHistory = async (
   userId: number,
   plant_id: string,
-  plant_name: string
+  plant_name: string,
+  img_url:string
 ) => {
   try {
     return await prisma.history.create({
@@ -15,6 +16,7 @@ export const createHistory = async (
         user: {
           connect: { id: userId },
         },
+        img_url
       },
     });
   } catch (error: unknown) {
