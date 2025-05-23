@@ -9,7 +9,7 @@ export const sendOTP = async (email: string) => {
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) throw new Error("User with this email does not exist");
 
-  const otp = randomInt(100000, 999999).toString();
+  const otp = randomInt(1000, 9999).toString();
   const expiresAt = new Date(Date.now() + otpExpiryMinutes * 60000);
 
   await prisma.oTP.upsert({
