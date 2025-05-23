@@ -1,5 +1,8 @@
 import { Router } from 'express';
 import {  getInfo, login,  refreshAccessToken, register } from '../controllers/auth.controllers';
+import { authenticateToken } from '../middlewares/auth.middleware';
+import { Roles } from '../middlewares/role.middleware';
+import { UserRole } from '@prisma/client';
 
 const router = Router();
 
@@ -7,7 +10,7 @@ const router = Router();
 router.post('/register', register as any);
 router.post('/login', login);
 router.post('/refresh-token', refreshAccessToken as any);
-router.post('/get-info', getInfo as any);
+router.post('/get-info', authenticateToken, Roles(UserRole.CUSTOMER), getInfo as any);
 
 
 export default router;
