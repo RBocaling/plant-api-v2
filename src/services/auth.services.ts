@@ -2,7 +2,8 @@ import argon2 from 'argon2';
 import prisma from '../config/prisma';
 import { generateAccessToken, generateRefreshToken } from '../utils/token';
 
-export const registerUser = async (email: string, password: string, role: "CUSTOMER" | "ADMIN", username:string) => {
+export const registerUser = async (email: string, password: string, role: "CUSTOMER" | "ADMIN", username:string, firstName:string,
+    lastName:string) => {
   const hashedPassword = await argon2.hash(password);
 
   const user = await prisma.user.create({
@@ -10,7 +11,9 @@ export const registerUser = async (email: string, password: string, role: "CUSTO
       email,
       password: hashedPassword,
       role,
-      username
+      username,
+      firstName,
+      lastName
     },
   });
 
