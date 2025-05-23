@@ -118,6 +118,25 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
   }
 };
 
+export const getInfo = async (req: Request, res: Response) => {
+   const userId = Number(req.user?.id); 
+
+  if (!userId) {
+    return res.status(400).json({ message: "Refresh token is required" });
+  }
+
+  try {
+    const response = await prisma.user.findUnique({
+      where: { id: Number(userId) }
+    });
+
+    res.status(200).json(response);
+  } catch (error) {
+    return res.status(403).json({ message: "Invalid refresh token" });
+  }
+};
+
+
 // export const uploadDocumentId = async (req: Request, res: Response) => {
 //   const { validIdUrl, selfPictureUrl, profileUrl } = req.body;
 
