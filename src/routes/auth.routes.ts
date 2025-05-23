@@ -10,7 +10,7 @@ const router = Router();
 router.post('/register', register as any);
 router.post('/login', login);
 router.post('/refresh-token', refreshAccessToken as any);
-router.post('/get-info', authenticateToken, getInfo as any);
+router.get('/get-info', authenticateToken, getInfo as any);
 
 
 export default router;
