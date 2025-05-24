@@ -26,74 +26,19 @@ model User {
   lastName String
   role           UserRole
 
-  personalInfo   PersonalInfo? @relation(fields: [personalInfoId], references: [id])
-  personalInfoId Int?          @unique
+  profile String
 
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
-  sentMessages     Chat[]   @relation("SentMessages")
   supportRequests Support[] 
   notifications  notif[]  @relation("UserNotifications")
   histories history[]
 }
 
-model PersonalInfo {
-  id        Int      @id @default(autoincrement())
-  fname     String
-  lname     String
-  phone     String
-  gender    Gender
-  address   String
-  birthdate String
-
-  user      User?
-} 
-
 model OTP {
   email     String @id
   otp       String
   expiresAt DateTime
-}
-
-model PlantCategory {
-  id        Int    @id @default(autoincrement())
-  name      String
-  imageUrl  String
-  plants    PlantInfo[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model PlantInfo {
-  id               Int            @id @default(autoincrement())
-  name             String
-  scientificName   String
-  genus            String
-  imageUrl         String
-  description      String
-  categoryId       Int
-  category         PlantCategory    @relation(fields: [categoryId], references: [id])
-  galleryImages    PlantGallery[]
- 
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
-}
-
-model PlantGallery {
-  id        Int   @id @default(autoincrement())
-  imageUrl  String
-  plantId   Int
-  plant     PlantInfo  @relation(fields: [plantId], references: [id])
-}
-
-model Chat {
-  id          Int      @id @default(autoincrement())
-  request     String
-  ai_response    String?
-  senderId    Int
-
-  sender      User     @relation("SentMessages", fields: [senderId], references: [id])
-  createdAt   DateTime @default(now())
 }
 
 model Support {
