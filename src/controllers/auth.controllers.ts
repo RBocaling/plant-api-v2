@@ -5,6 +5,7 @@ import {
   loginUser,
   // uploadDocuments,
   userInfo,
+  changePassword,
 } from "../services/auth.services";
 import {
   generateAccessToken,
@@ -18,15 +19,16 @@ import {
 } from "../services/user.services";
 
 export const register = async (req: Request, res: Response) => {
-  const { email, password, confirmPassword, role, username, firstName,lastName } = req.body;
-  console.log("{ email, password, role, username }", {
+  const { email, password, confirmPassword, role, username, firstName,lastName, profile } = req.body;
+  console.log("{ email, password, role, username, profile }", {
     email,
     password,
     confirmPassword,
     role,
     username,
     firstName,
-    lastName
+    lastName,
+    profile
   });
 
   const existingUser = await prisma.user.findUnique({
@@ -75,7 +77,7 @@ export const register = async (req: Request, res: Response) => {
   }
 
   try {
-    const user = await registerUser(email, password, role, username,firstName,lastName);
+    const user = await registerUser(email, password, role, username,firstName,lastName, profile);
     res.status(201).json({ message: "User registered", userId: user.id });
   } catch (error: any) {
     res.status(401).json({ message: error.message });
@@ -137,21 +139,22 @@ export const getInfo = async (req: Request, res: Response) => {
 };
 
 
-// export const uploadDocumentId = async (req: Request, res: Response) => {
-//   const { validIdUrl, selfPictureUrl, profileUrl } = req.body;
+export const updatePassword = async (req: Request, res: Response) => {
+  const userId = Number(req.user?.id); 
+  const { currentPassword, newPassword, confirmNewPassword } = req.body;
 
-//   try {
-//     const response = await uploadDocuments({
-//       validIdUrl,
-//       selfPictureUrl,
-//       id: Number(req.user?.id),
-//       profileUrl,
-//     });
-//     res.status(201).json({ message: "Document Upload", data: response });
-//   } catch (error: any) {
-//     res.status(401).json({ message: error.message });
-//   }
-// };
+  if (!currentPassword || !newPassword || !confirmNewPassword) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  try {
+    const response = await changePassword(userId, currentPassword, newPassword, confirmNewPassword);
+    res.status(200).json(response);
+  } catch (error: any) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 
 
 

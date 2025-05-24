@@ -26,7 +26,7 @@ model User {
   lastName String
   role           UserRole
 
-  profile String
+  profile String?
 
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
