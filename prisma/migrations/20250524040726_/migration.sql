@@ -112,6 +112,7 @@ CREATE TABLE `history` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `plant_id` VARCHAR(191) NOT NULL,
     `plant_name` VARCHAR(191) NOT NULL,
+    `img_url` VARCHAR(191) NULL,
     `userId` INTEGER NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
