@@ -13,10 +13,10 @@ export const createHistory = async (
       data: {
         plant_id,
         plant_name,
+        img_url,
         user: {
           connect: { id: userId },
         },
-        img_url
       },
     });
   } catch (error: unknown) {

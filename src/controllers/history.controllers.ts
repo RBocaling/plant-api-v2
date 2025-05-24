@@ -3,10 +3,7 @@ import { createHistory, getHistoryByUser } from '../services/history.services';
 
 export const createHistoryController = async (req: Request, res: Response) => {
   try {
-    const { plant_id, plant_name } = req.body;
-    const img_url = req.body.img_url || req.body["img_url "] || null;
-
-    const actualImgUrl = img_url ?? req.body["img_url "];
+    const { plant_id, plant_name, img_url } = req.body;
     const userId = Number(req.user?.id);
 
     if (!plant_id || !plant_name) {
