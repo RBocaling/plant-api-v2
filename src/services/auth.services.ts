@@ -76,3 +76,37 @@ export const userInfo = async (id:number)  => {
     
   }
 };
+
+
+export const changePassword = async (
+  userId: number,
+  currentPassword: string,
+  newPassword: string,
+  confirmNewPassword: string
+) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  const isPasswordValid = await argon2.verify(user.password, currentPassword);
+  if (!isPasswordValid) {
+    throw new Error("Current password is incorrect");
+  }
+
+  if (newPassword !== confirmNewPassword) {
+    throw new Error("New password and confirm password do not match");
+  }
+
+  const newHashedPassword = await argon2.hash(newPassword);
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { password: newHashedPassword },
+  });
+
+  return { message: "Password changed successfully" };
+};

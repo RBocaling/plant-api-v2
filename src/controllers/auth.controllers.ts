@@ -5,6 +5,7 @@ import {
   loginUser,
   // uploadDocuments,
   userInfo,
+  changePassword,
 } from "../services/auth.services";
 import {
   generateAccessToken,
@@ -156,3 +157,18 @@ export const getInfo = async (req: Request, res: Response) => {
 
 
 
+export const updatePassword = async (req: Request, res: Response) => {
+  const userId = Number(req.user?.id); 
+  const { currentPassword, newPassword, confirmNewPassword } = req.body;
+
+  if (!currentPassword || !newPassword || !confirmNewPassword) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  try {
+    const response = await changePassword(userId, currentPassword, newPassword, confirmNewPassword);
+    res.status(200).json(response);
+  } catch (error: any) {
+    res.status(400).json({ message: error.message });
+  }
+};
