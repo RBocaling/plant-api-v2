@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { fetchAllSupportConcerns, getSupportConcernByIdAdmin, submitSupportConcern } from '../services/support_chat.services';
+import { fetchAllSupportConcerns, getSupportConcernByIdAdmin, submitSupportConcern, updateResponse } from '../services/support_chat.services';
 
 
 export const createSupportConcern = async (req: Request, res: Response) => {
@@ -17,6 +17,26 @@ export const createSupportConcern = async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Controller Error:', error);
     return res.status(500).json({ error: 'Failed to submit concern.' });
+  }
+};
+
+export const replyToSupport = async (req: Request, res: Response) => {
+  try {
+    const { id, response } = req.body;
+
+    if (!id || !response) {
+      return res.status(400).json({ error: 'ID and response are required.' });
+    }
+
+    const updated = await updateResponse(Number(id), response);
+
+    return res.status(200).json({
+      message: 'Response sent to customer and saved.',
+      data: updated,
+    });
+  } catch (error: any) {
+    console.error('Controller Error - replyToSupport:', error);
+    return res.status(500).json({ error: error.message || 'Failed to respond.' });
   }
 };
 

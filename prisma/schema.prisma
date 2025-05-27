@@ -45,7 +45,8 @@ model User {
   firstName  String
   lastName String
   role           UserRole
-
+  archived  Boolean  @default(false)
+  
   profile String?
 
   createdAt      DateTime  @default(now())
@@ -67,7 +68,7 @@ model Support {
   id          Int      @id @default(autoincrement())
   concern_msg String
   image       String
-
+  response    String?
   customer_id Int
   customer    User     @relation(fields: [customer_id], references: [id])
 
@@ -112,9 +113,10 @@ model PlantAdvisory {
 model Feedback{
   id          Int      @id @default(autoincrement())
   rating      Int
+  description String?
   createdAt   DateTime @default(now())
   status      String
-
+  response    String?
   userId      Int
  
   user        User     @relation(fields: [userId], references: [id])
