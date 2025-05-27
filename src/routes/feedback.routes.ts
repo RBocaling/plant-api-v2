@@ -9,7 +9,7 @@ const router = Router();
 router.post('/create-feedback', authenticateToken, Roles(UserRole.CUSTOMER),  createFeedback as any);
 router.post('/make-response', authenticateToken, Roles(UserRole.OWNER),  respondToFeedback as any);
 router.post('/update-status', authenticateToken, Roles(UserRole.OWNER),  updateFeedbackStatus as any);
-router.get('/get-feedback', authenticateToken, Roles(UserRole.OWNER),  getAllFeedbacks as any);
+router.get('/get-feedback', authenticateToken,  getAllFeedbacks as any);
 router.get('/get-feedback-byuser', authenticateToken, Roles(UserRole.CUSTOMER),  getFeedbackForUser as any);
     
 export default router;
