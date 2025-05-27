@@ -1,9 +1,10 @@
 import argon2 from 'argon2';
 import prisma from '../config/prisma';
 import { generateAccessToken, generateRefreshToken } from '../utils/token';
+import { UserRole } from '@prisma/client';
 
-export const registerUser = async (email: string, password: string, role: "CUSTOMER" | "ADMIN", username:string, firstName:string,
-    lastName:string) => {
+export const registerUser = async (email: string, password: string, role: UserRole, username:string, firstName:string,
+    lastName:string, profile?:string) => {
   const hashedPassword = await argon2.hash(password);
 
   const user = await prisma.user.create({
@@ -13,7 +14,8 @@ export const registerUser = async (email: string, password: string, role: "CUSTO
       role,
       username,
       firstName,
-      lastName
+      lastName,
+      profile,
     },
   });
 
@@ -56,28 +58,6 @@ export const loginUser = async (identifier: string, password: string)  => {
   };
 };
 
-export const userInfo = async (id:number)  => {
-  try {
-    
-    const user = await prisma.user.findUnique({
-      where: {
-        id,
-      },
-      select: {
-        email:true,
-        username:true,
-        role:true,
-       // profileUrl:true
-      }
-    });
-  
-    return user;
-  } catch (error) {
-    
-  }
-};
-
-
 export const changePassword = async (
   userId: number,
   currentPassword: string,
@@ -109,4 +89,123 @@ export const changePassword = async (
   });
 
   return { message: "Password changed successfully" };
+};
+
+
+export const userInfo = async (id: number) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: {
+        id:true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        username: true,
+        role: true,
+
+      },
+    });
+
+    if (!user) {
+      throw new Error(`User with ID ${id} not found`);
+    }
+
+    return user;
+  } catch (error) {
+    console.error('Service Error - userInfo:', error);
+    throw new Error('Failed to retrieve user info');
+  }
+};
+
+export const getAllCustomerUsers = async () => {
+  try {
+    const customers = await prisma.user.findMany({
+      where: { role: UserRole.CUSTOMER },
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        username: true,
+        // role: true,
+      },
+    });
+
+    return customers;
+  } catch (error) {
+    console.error('Service Error - getAllCustomerUsers:', error);
+    throw new Error('Failed to retrieve customer users');
+  }
+};
+
+export const editUser = async (
+  userId: number,
+  updates: {
+    email?: string;
+    username?: string;
+    firstName?: string;
+    lastName?: string;
+    profile?: string;
+  }
+) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user) {
+    throw new Error(`User with ID ${userId} not found`);
+  }
+
+    if (user.role !== 'CUSTOMER') {
+    throw new Error(`Only users with the role 'CUSTOMER' can be edited`);
+  }
+
+  const updated = await prisma.user.update({
+    where: { id: userId },
+    data: updates,
+    select: {
+    id: true,
+    email: true,
+    username: true,
+    firstName: true,
+    lastName: true,
+  },
+  });
+
+  return updated;
+};
+
+export const archiveUser = async (userId: number) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user) {
+    throw new Error(`User with ID ${userId} not found`);
+  }
+
+  if (user.role !== 'CUSTOMER') {
+    throw new Error(`Only users with the role 'CUSTOMER' can be archived`);
+  }
+
+  const archivedUser = await prisma.user.update({
+    where: { id: userId },
+    data: { archived: true },
+    select: {
+      id: true,
+      email: true,
+      username: true,
+      firstName: true,
+      lastName: true,
+      role: true,
+      archived: true,
+    },
+  });
+
+  return {
+    message: `User with ID ${userId} archived successfully.`,
+    user: archivedUser,
+  };
 };

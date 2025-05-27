@@ -6,28 +6,28 @@ import {
   // uploadDocuments,
   userInfo,
   changePassword,
+  editUser,
+  getAllCustomerUsers,
+  archiveUser,
 } from "../services/auth.services";
 import {
   generateAccessToken,
   generateRefreshToken,
   verifyRefreshToken,
 } from "../utils/token";
-import {
-  getCustomerById,
-
-  
-} from "../services/user.services";
+import { UserRole } from "@prisma/client";
 
 export const register = async (req: Request, res: Response) => {
-  const { email, password, confirmPassword, role, username, firstName,lastName } = req.body;
-  console.log("{ email, password, role, username }", {
+  const { email, password, confirmPassword, role, username, firstName,lastName, profile } = req.body;
+  console.log("{ email, password, role, username, profile }", {
     email,
     password,
     confirmPassword,
     role,
     username,
     firstName,
-    lastName
+    lastName,
+    profile
   });
 
   const existingUser = await prisma.user.findUnique({
@@ -76,7 +76,7 @@ export const register = async (req: Request, res: Response) => {
   }
 
   try {
-    const user = await registerUser(email, password, role, username,firstName,lastName);
+    const user = await registerUser(email, password, role, username,firstName,lastName, profile);
     res.status(201).json({ message: "User registered", userId: user.id });
   } catch (error: any) {
     res.status(401).json({ message: error.message });
@@ -120,42 +120,20 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
 };
 
 export const getInfo = async (req: Request, res: Response) => {
-   const userId = Number(req.user?.id); 
+  const userId = Number(req.user?.id);
 
-  if (!userId) {
-    return res.status(400).json({ message: "Refresh token is required" });
+  if (!userId || isNaN(userId)) {
+    return res.status(400).json({ message: 'Invalid user ID' });
   }
 
   try {
-    const response = await prisma.user.findUnique({
-      where: { id: Number(userId) }
-    });
-
-    res.status(200).json(response);
-  } catch (error) {
-    return res.status(403).json({ message: "Invalid refresh token" });
+    const user = await userInfo(userId);
+    return res.status(200).json(user);
+  } catch (error: any) {
+    console.error('Controller Error - getInfo:', error);
+    return res.status(500).json({ error: error.message || 'Failed to fetch user info' });
   }
 };
-
-
-// export const uploadDocumentId = async (req: Request, res: Response) => {
-//   const { validIdUrl, selfPictureUrl, profileUrl } = req.body;
-
-//   try {
-//     const response = await uploadDocuments({
-//       validIdUrl,
-//       selfPictureUrl,
-//       id: Number(req.user?.id),
-//       profileUrl,
-//     });
-//     res.status(201).json({ message: "Document Upload", data: response });
-//   } catch (error: any) {
-//     res.status(401).json({ message: error.message });
-//   }
-// };
-
-
-
 
 export const updatePassword = async (req: Request, res: Response) => {
   const userId = Number(req.user?.id); 
@@ -172,3 +150,67 @@ export const updatePassword = async (req: Request, res: Response) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+
+export const updateUser = async (req: Request, res: Response) => {
+  const { id, email, username, firstName, lastName, profile } = req.body;
+
+  if (!id || isNaN(Number(id))) {
+    return res.status(400).json({ message: 'A valid user ID is required' });
+  }
+
+  const user = await prisma.user.findUnique({ where: { id: Number(id) } });
+
+  if (!user) {
+    return res.status(404).json({ message: `User with ID ${id} not found` });
+  }
+
+  if (user.role !== UserRole.CUSTOMER) {
+    return res.status(403).json({ message: 'Only users with role CUSTOMER can be edited' });
+  }
+  try {
+    const updated = await editUser(Number(id), {
+      email,
+      username,
+      firstName,
+      lastName,
+      profile,
+    });
+
+    return res.status(200).json({ message: 'User updated successfully', data: updated });
+  } catch (error: any) {
+    console.error('Controller Error - updateUser:', error);
+    return res.status(500).json({ error: error.message || 'Failed to update user' });
+  }
+};
+
+
+export const removeUser = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const userId = parseInt(id, 10);
+    if (isNaN(userId)) {
+      return res.status(400).json({ error: 'Invalid user ID' });
+    }
+
+    const result = await archiveUser(userId);
+    return res.status(200).json(result);
+  } catch (error: any) {
+    return res.status(400).json({ error: error.message });
+  }
+};
+
+
+
+export const fetchAllCustomerUsers = async (req: Request, res: Response) => {
+  try {
+    const customers = await getAllCustomerUsers();
+    return res.status(200).json({ message: 'All customer users retrieved successfully', data: customers });
+  } catch (error: any) {
+    console.error('Controller Error - fetchAllCustomerUsers:', error);
+    return res.status(500).json({ error: error.message || 'Failed to fetch customer users' });
+  }
+};
+
+

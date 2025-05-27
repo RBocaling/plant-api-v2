@@ -10,6 +10,8 @@ datasource db {
 enum UserRole {
   CUSTOMER
   ADMIN
+  OWNER
+  SPECIALIST
 }
 
 enum Gender {
@@ -17,6 +19,24 @@ enum Gender {
   FEMALE
 }
 
+enum Status {
+  OPEN
+  RESOLVED
+  INPROGRESS
+  URGENT
+  LOW
+  HIGH
+  MEDIUM
+
+}
+
+enum Type {
+  URGENT_CARE
+  REPOTTING_ADVISE
+  TROUBLESHOOTING
+  CARE_SCHEDULE
+  DISEASE_IDENTIFICATION
+}
 model User {
   id             Int       @id @default(autoincrement())
   email          String    @unique
@@ -25,29 +45,18 @@ model User {
   firstName  String
   lastName String
   role           UserRole
-
-  personalInfo   PersonalInfo? @relation(fields: [personalInfoId], references: [id])
-  personalInfoId Int?          @unique
+  archived  Boolean  @default(false)
+  
+  profile String?
 
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
-  sentMessages     Chat[]   @relation("SentMessages")
   supportRequests Support[] 
   notifications  notif[]  @relation("UserNotifications")
   histories history[]
+  plantAdvisories PlantAdvisory []
+  feedBack Feedback []
 }
-
-model PersonalInfo {
-  id        Int      @id @default(autoincrement())
-  fname     String
-  lname     String
-  phone     String
-  gender    Gender
-  address   String
-  birthdate String
-
-  user      User?
-} 
 
 model OTP {
   email     String @id
@@ -55,52 +64,11 @@ model OTP {
   expiresAt DateTime
 }
 
-model PlantCategory {
-  id        Int    @id @default(autoincrement())
-  name      String
-  imageUrl  String
-  plants    PlantInfo[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model PlantInfo {
-  id               Int            @id @default(autoincrement())
-  name             String
-  scientificName   String
-  genus            String
-  imageUrl         String
-  description      String
-  categoryId       Int
-  category         PlantCategory    @relation(fields: [categoryId], references: [id])
-  galleryImages    PlantGallery[]
- 
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
-}
-
-model PlantGallery {
-  id        Int   @id @default(autoincrement())
-  imageUrl  String
-  plantId   Int
-  plant     PlantInfo  @relation(fields: [plantId], references: [id])
-}
-
-model Chat {
-  id          Int      @id @default(autoincrement())
-  request     String
-  ai_response    String?
-  senderId    Int
-
-  sender      User     @relation("SentMessages", fields: [senderId], references: [id])
-  createdAt   DateTime @default(now())
-}
-
 model Support {
   id          Int      @id @default(autoincrement())
   concern_msg String
   image       String
-
+  response    String?
   customer_id Int
   customer    User     @relation(fields: [customer_id], references: [id])
 
@@ -127,6 +95,31 @@ model history {
   user       User     @relation(fields: [userId], references: [id])
 
   createdAt   DateTime @default(now())
+}
+
+model PlantAdvisory {
+  id          Int      @id @default(autoincrement())
+  plant_name  String
+  createdAt   DateTime @default(now())
+  request_type String
+  status      String
+  priority    String
+ 
+  userId      Int
+ 
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model Feedback{
+  id          Int      @id @default(autoincrement())
+  rating      Int
+  description String?
+  createdAt   DateTime @default(now())
+  status      String
+  response    String?
+  userId      Int
+ 
+  user        User     @relation(fields: [userId], references: [id])
 }
 
 
