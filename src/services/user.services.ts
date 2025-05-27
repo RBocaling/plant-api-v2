@@ -1,13 +1,11 @@
 import prisma from "../config/prisma";
 
-export const getCustomerById = async (userId:number) => {
+export const getUserCount = async () => {
   try {
-    const response = await prisma.customer.findFirst({
-      where: { userId },
-    });
-    return response
+    const count = await prisma.user.count();
+    return count;
   } catch (error) {
-      throw new Error("get customer")
+    throw new Error("Error getting user count");
   }
 };
 

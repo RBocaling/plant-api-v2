@@ -10,6 +10,8 @@ datasource db {
 enum UserRole {
   CUSTOMER
   ADMIN
+  OWNER
+  SPECIALIST
 }
 
 enum Gender {
@@ -17,6 +19,24 @@ enum Gender {
   FEMALE
 }
 
+enum Status {
+  OPEN
+  RESOLVED
+  INPROGRESS
+  URGENT
+  LOW
+  HIGH
+  MEDIUM
+
+}
+
+enum Type {
+  URGENT_CARE
+  REPOTTING_ADVISE
+  TROUBLESHOOTING
+  CARE_SCHEDULE
+  DISEASE_IDENTIFICATION
+}
 model User {
   id             Int       @id @default(autoincrement())
   email          String    @unique
@@ -33,6 +53,8 @@ model User {
   supportRequests Support[] 
   notifications  notif[]  @relation("UserNotifications")
   histories history[]
+  plantAdvisories PlantAdvisory []
+  feedBack Feedback []
 }
 
 model OTP {
@@ -72,6 +94,30 @@ model history {
   user       User     @relation(fields: [userId], references: [id])
 
   createdAt   DateTime @default(now())
+}
+
+model PlantAdvisory {
+  id          Int      @id @default(autoincrement())
+  plant_name  String
+  createdAt   DateTime @default(now())
+  request_type String
+  status      String
+  priority    String
+ 
+  userId      Int
+ 
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model Feedback{
+  id          Int      @id @default(autoincrement())
+  rating      Int
+  createdAt   DateTime @default(now())
+  status      String
+
+  userId      Int
+ 
+  user        User     @relation(fields: [userId], references: [id])
 }
 
 

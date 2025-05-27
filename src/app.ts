@@ -6,6 +6,10 @@ import otp from './routes/otp.routes';
 import supportRouter  from './routes/support.routes';
 import notif  from './routes/notification.routes';
 import historyRoutes  from './routes/history.routes';
+import userRoute  from './routes/user.routes';
+import contactUs  from './routes/contact_us.routes';
+import plantAdvisory  from './routes/plant_advisory.routes';
+import userFeedback  from './routes/feedback.routes';
 
 import cors from 'cors';
 import path from 'path';
@@ -30,6 +34,9 @@ app.use('/api/forgot-password/', otp);
 app.use('/api/supports/', supportRouter);
 app.use('/api/notification/', notif);
 app.use('/api/history/', historyRoutes);
-
+app.use('/api/users/', userRoute);
+app.use('/api/contact-us/', contactUs);
+app.use('/api/plant-advisory/', plantAdvisory);
+app.use('/api/feedback/', userFeedback);
 
 export default app;
