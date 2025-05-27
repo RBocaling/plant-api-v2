@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { createHistory, getHistoryByUser } from '../services/history.services';
+import prisma from '../config/prisma';
 
 export const createHistoryController = async (req: Request, res: Response) => {
   try {
@@ -35,6 +36,19 @@ export const getHistoryByUserController = async (req: Request, res: Response) =>
     }
 
     const histories = await getHistoryByUser(userId);
+
+    return res.status(200).json({
+      message: 'User history fetched successfully.',
+      data: histories,
+    });
+  } catch (error) {
+    console.error('Get History Controller Error:', error);
+    return res.status(500).json({ error: 'Failed to fetch user history.' });
+  }
+};
+export const getAllHistory = async (req: Request, res: Response) => {
+  try {
+    const histories = await prisma.history.findMany()
 
     return res.status(200).json({
       message: 'User history fetched successfully.',
