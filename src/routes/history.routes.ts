@@ -7,6 +7,6 @@ import { createHistoryController,getHistoryByUserController } from "../controlle
 const router = Router();
 
 router.post('/create-history', authenticateToken, Roles(UserRole.CUSTOMER),  createHistoryController as any);
-router.get('/get-history', authenticateToken, Roles(UserRole.CUSTOMER),  getHistoryByUserController as any);
+router.get('/get-history', authenticateToken,  getHistoryByUserController as any);
 
 export default router;
