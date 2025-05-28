@@ -121,7 +121,7 @@ export const userInfo = async (id: number) => {
 export const getAllCustomerUsers = async () => {
   try {
     const customers = await prisma.user.findMany({
-      where: { role: UserRole.CUSTOMER },
+      // where: { role: UserRole.CUSTOMER },
       orderBy: { createdAt: 'desc' },
       select: {
         id: true,
