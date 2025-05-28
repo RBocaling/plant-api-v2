@@ -150,17 +150,17 @@ export const editUser = async (
     profile?: string;
   }
 ) => {
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-  });
+  // const user = await prisma.user.findUnique({
+  //   where: { id: userId },
+  // });
 
-  if (!user) {
-    throw new Error(`User with ID ${userId} not found`);
-  }
+  // if (!user) {
+  //   throw new Error(`User with ID ${userId} not found`);
+  // }
 
-    if (user.role !== 'CUSTOMER') {
-    throw new Error(`Only users with the role 'CUSTOMER' can be edited`);
-  }
+  //   if (user.role !== 'CUSTOMER') {
+  //   throw new Error(`Only users with the role 'CUSTOMER' can be edited`);
+  // }
 
   const updated = await prisma.user.update({
     where: { id: userId },
