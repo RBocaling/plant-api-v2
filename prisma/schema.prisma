@@ -46,7 +46,7 @@ model User {
   lastName String
   role           UserRole
   archived  Boolean  @default(false)
-  
+
   profile String?
 
   createdAt      DateTime  @default(now())
@@ -104,7 +104,7 @@ model PlantAdvisory {
   request_type String
   status      String
   priority    String
- 
+  response    String?
   userId      Int
  
   user        User     @relation(fields: [userId], references: [id])

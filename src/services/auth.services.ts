@@ -111,7 +111,10 @@ export const userInfo = async (id: number) => {
       throw new Error(`User with ID ${id} not found`);
     }
 
-    return user;
+      return {
+      ...user,
+      role: user.role.toLowerCase(),
+    };
   } catch (error) {
     console.error('Service Error - userInfo:', error);
     throw new Error('Failed to retrieve user info');

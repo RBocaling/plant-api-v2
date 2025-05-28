@@ -5,6 +5,7 @@ import {
   getPlantAdvisoryById,
   updatePlantAdvisoryStatus,
   updatePlantAdvisoryPriority,
+  makeResponse,
 } from '../services/plant_advisory.services';
 import { Type, Status } from '@prisma/client';
 
@@ -41,6 +42,30 @@ export const createPlantAdvisory = async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Controller Error - createPlantAdvisory:', error);
     return res.status(500).json({ error: 'Failed to submit plant advisory.' });
+  }
+};
+
+export const respondToAdvisory = async (req: Request, res: Response) => {
+  try {
+    const { id, response: reply } = req.body;
+
+    if (!id || isNaN(Number(id))) {
+      return res.status(400).json({ error: 'Invalid advisory ID.' });
+    }
+
+    if (!reply || typeof reply !== 'string') {
+      return res.status(400).json({ error: 'Response message is required.' });
+    }
+
+    const updated = await makeResponse(Number(id), reply);
+
+    return res.status(200).json({
+      message: `Response added to advisory ID ${id}.`,
+      data: updated,
+    });
+  } catch (error: any) {
+    console.error('Controller Error - respondAdvisory:', error);
+    return res.status(500).json({ error: error.message || 'Failed to respond to advisory.' });
   }
 };
 

@@ -28,6 +28,28 @@ export const submitPlantAdvisory = async (
   }
 };
 
+export const makeResponse = async (id: number, response: string) => {
+  const feedback = await prisma.feedback.findUnique({
+    where: { id },
+  });
+
+  if (!feedback) {
+    throw new Error(`Advisory with ID ${id} not found`);
+  }
+
+  try {
+    const updated = await prisma.feedback.update({
+      where: { id },
+      data: { response },
+    });
+
+    return updated;
+  } catch (error) {
+    console.error('Service Error - makeResponse:', error);
+    throw new Error('Failed to to make advisory');
+  }
+};
+
 export const fetchAllPlantAdvisories = async () => {
   try {
     return await prisma.plantAdvisory.findMany({
