@@ -159,15 +159,15 @@ export const updateUser = async (req: Request, res: Response) => {
     return res.status(400).json({ message: 'A valid user ID is required' });
   }
 
-  const user = await prisma.user.findUnique({ where: { id: Number(id) } });
+  // const user = await prisma.user.findUnique({ where: { id: Number(id) } });
 
-  if (!user) {
-    return res.status(404).json({ message: `User with ID ${id} not found` });
-  }
+  // if (!user) {
+  //   return res.status(404).json({ message: `User with ID ${id} not found` });
+  // }
 
-  if (user.role !== UserRole.CUSTOMER) {
-    return res.status(403).json({ message: 'Only users with role CUSTOMER can be edited' });
-  }
+  // if (user.role !== UserRole.CUSTOMER) {
+  //   return res.status(403).json({ message: 'Only users with role CUSTOMER can be edited' });
+  // }
   try {
     const updated = await editUser(Number(id), {
       email,

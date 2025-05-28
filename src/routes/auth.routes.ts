@@ -13,7 +13,7 @@ router.post('/refresh-token', refreshAccessToken as any);
 router.get('/get-info', authenticateToken, getInfo as any);
 router.get('/get-users-list', authenticateToken, fetchAllCustomerUsers as any);
 router.post('/change-password', authenticateToken, Roles(UserRole.CUSTOMER),  updatePassword as any);
-router.post('/edit-user', authenticateToken, Roles(UserRole.ADMIN), updateUser as any);
+router.post('/edit-user', authenticateToken, updateUser as any);
 router.post('/delete-user/:id', authenticateToken, Roles(UserRole.ADMIN), removeUser as any);
 
 export default router;
