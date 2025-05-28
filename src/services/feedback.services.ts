@@ -82,6 +82,7 @@ export const fetchAllFeedbacks = async () => {
           select: {
             firstName: true,
             lastName: true,
+            email:true
           },
         },
       },
