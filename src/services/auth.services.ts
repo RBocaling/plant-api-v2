@@ -129,6 +129,7 @@ export const getAllCustomerUsers = async () => {
         firstName: true,
         lastName: true,
         username: true,
+        role:true
         // role: true,
       },
     });
