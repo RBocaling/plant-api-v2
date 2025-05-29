@@ -9,6 +9,8 @@ import {
   editUser,
   getAllCustomerUsers,
   archiveUser,
+  getAllAdmin,
+  getAllSubAdmin,
 } from "../services/auth.services";
 import {
   generateAccessToken,
@@ -226,5 +228,27 @@ export const fetchAllCustomerUsers = async (req: Request, res: Response) => {
     return res.status(500).json({ error: error.message || 'Failed to fetch customer users' });
   }
 };
+
+export const fetchAllAdminUsers = async (req: Request, res: Response) => {
+  try {
+    const admin = await getAllAdmin();
+    return res.status(200).json({ message: 'All IT ADMIN users retrieved successfully', data: admin });
+  } catch (error: any) {
+    console.error('Controller Error - fetchAllAdminUsers:', error);
+    return res.status(500).json({ error: error.message || 'Failed to fetch admin users' });
+  }
+};
+
+export const fetchAllSubAdmin = async (req: Request, res: Response) => {
+  try {
+    const admins = await getAllSubAdmin();
+    return res.status(200).json({ message: 'All ADMIN users retrieved successfully', data: admins });
+  } catch (error: any) {
+    console.error('Controller Error - fetchAllSubAdmin:', error);
+    return res.status(500).json({ error: error.message || 'Failed to fetch admins users' });
+  }
+};
+
+
 
 

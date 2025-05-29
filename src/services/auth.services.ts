@@ -214,3 +214,52 @@ export const archiveUser = async (userId: number) => {
     user: archivedUser,
   };
 };
+
+export const getAllAdmin = async () => {
+  try {
+    const admin = await prisma.user.findMany({
+       where: { role: UserRole.ADMIN },
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        username: true,
+        role:true
+        // role: true,
+      },
+    });
+
+    return admin;
+  } catch (error) {
+    console.error('Service Error - getAllAdmin:', error);
+    throw new Error('Failed to retrieve admin users');
+  }
+};
+
+export const getAllSubAdmin = async () => {
+  try {
+    const admins = await prisma.user.findMany({
+       where: {
+        role: {
+          in: [UserRole.SPECIALIST, UserRole.OWNER], 
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        username: true,
+        role:true
+      },
+    });
+
+    return admins;
+  } catch (error) {
+    console.error('Service Error - getAllAdmin:', error);
+    throw new Error('Failed to retrieve admin users');
+  }
+};
