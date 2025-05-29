@@ -16,6 +16,7 @@ import {
   verifyRefreshToken,
 } from "../utils/token";
 import { UserRole } from "@prisma/client";
+import { logActivity } from "../utils/logs";
 
 export const register = async (req: Request, res: Response) => {
   const { email, password, confirmPassword, role, username, firstName,lastName, profile } = req.body;
@@ -77,6 +78,7 @@ export const register = async (req: Request, res: Response) => {
 
   try {
     const user = await registerUser(email, password, role, username,firstName,lastName, profile);
+    await logActivity({ userId: user.id, activity: 'Registered a new account' });
     res.status(201).json({ message: "User registered", userId: user.id });
   } catch (error: any) {
     res.status(401).json({ message: error.message });
@@ -87,7 +89,10 @@ export const login = async (req: Request, res: Response) => {
   const { identifier, password } = req.body;
   
   try {
-    const { accessToken, refreshToken } = await loginUser(identifier, password);
+    const { accessToken, refreshToken, user } = await loginUser(identifier, password);
+    
+
+    await logActivity({ userId: user.id, activity: 'User logged in' });
 
     res.status(201).json({
       accessToken,
@@ -145,6 +150,7 @@ export const updatePassword = async (req: Request, res: Response) => {
 
   try {
     const response = await changePassword(userId, currentPassword, newPassword, confirmNewPassword);
+    await logActivity({ userId, activity: 'Changed password' });
     res.status(200).json(response);
   } catch (error: any) {
     res.status(400).json({ message: error.message });
@@ -177,6 +183,8 @@ export const updateUser = async (req: Request, res: Response) => {
       profile,
     });
 
+    await logActivity({ userId: Number(id), activity: 'Edited user profile' });
+
     return res.status(200).json({ message: 'User updated successfully', data: updated });
   } catch (error: any) {
     console.error('Controller Error - updateUser:', error);
@@ -195,6 +203,12 @@ export const removeUser = async (req: Request, res: Response) => {
     }
 
     const result = await archiveUser(userId);
+
+     await logActivity({
+      userId: Number(req.user?.id),
+      activity: `Archived user ID ${id}`,
+    });
+    
     return res.status(200).json(result);
   } catch (error: any) {
     return res.status(400).json({ error: error.message });

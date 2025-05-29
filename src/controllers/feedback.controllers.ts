@@ -8,6 +8,7 @@ import {
   getUserFeedback,
 } from '../services/feedback.services';
 import { Status } from '@prisma/client';
+import { logActivity } from '../utils/logs';
 
 export const createFeedback = async (req: Request, res: Response) => {
      console.log('BODY:', req.body);
@@ -25,6 +26,11 @@ export const createFeedback = async (req: Request, res: Response) => {
 
     const feedback = await submitFeedback(rating, userId, description);
 
+    await logActivity({
+      userId,
+      activity: `Submitted feedback with rating ${rating}`,
+    });
+
     return res.status(201).json({ message: 'Feedback submitted.', data: feedback });
   } catch (error: any) {
     console.error('Controller Error - createFeedback:', error);
@@ -36,6 +42,7 @@ export const createFeedback = async (req: Request, res: Response) => {
 export const respondToFeedback = async (req: Request, res: Response) => {
   try {
     const { id, response: reply } = req.body;
+    const userId = Number(req.user?.id);
 
     if (!id || isNaN(Number(id))) {
       return res.status(400).json({ error: 'Invalid feedback ID.' });
@@ -46,6 +53,11 @@ export const respondToFeedback = async (req: Request, res: Response) => {
     }
 
     const updated = await makeResponse(Number(id), reply);
+
+    await logActivity({
+      userId,
+      activity: `Responded to feedback ID ${id}`,
+    });
 
     return res.status(200).json({
       message: `Response added to feedback ID ${id}.`,
@@ -60,6 +72,7 @@ export const respondToFeedback = async (req: Request, res: Response) => {
 export const updateFeedbackStatus = async (req: Request, res: Response) => {
   try {
     const { id, status } = req.body;
+    const userId = Number(req.user?.id);
 
     if (!id || isNaN(Number(id))) {
       return res.status(400).json({ error: 'Invalid feedback ID.' });
@@ -76,6 +89,11 @@ export const updateFeedbackStatus = async (req: Request, res: Response) => {
     }
 
     const updated = await updateStatus(Number(id), status as Status);
+
+     await logActivity({
+      userId,
+      activity: `Updated feedback ID ${id} status to "${status}"`,
+    });
 
     return res.status(200).json({
       message: `Status updated for feedback ID ${id}.`,
@@ -101,7 +119,7 @@ export const getAllFeedbacks = async (_req: Request, res: Response) => {
 export const getFeedbackByIdController = async (req: Request, res: Response) => {
   try {
     const id = Number(req.params.id);
-
+    const userId = Number(req.user?.id);
     if (isNaN(id)) {
       return res.status(400).json({ error: 'Invalid feedback ID.' });
     }
@@ -111,6 +129,11 @@ export const getFeedbackByIdController = async (req: Request, res: Response) => 
     if (!feedback) {
       return res.status(404).json({ error: 'Feedback not found.' });
     }
+
+    await logActivity({
+      userId,
+      activity: `Viewed feedback ID ${id}`,
+    });
 
     return res.status(200).json({ message: 'Feedback retrieved.', data: feedback });
   } catch (error) {
@@ -130,6 +153,10 @@ export const getFeedbackForUser = async (req: Request, res: Response) => {
 
     const feedbacks = await getUserFeedback(userId);
 
+    await logActivity({
+      userId,
+      activity: 'Viewed their own feedback list',
+    });
     return res.status(200).json({ message: 'User feedback retrieved.', data: feedbacks });
   } catch (error: any) {
     console.error('Controller Error - getFeedbackForUser:', error);

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { createHistory, getHistoryByUser } from '../services/history.services';
+import { logActivity } from '../utils/logs';
 
 export const createHistoryController = async (req: Request, res: Response) => {
   try {
@@ -15,6 +16,8 @@ export const createHistoryController = async (req: Request, res: Response) => {
     }
 
     const history = await createHistory(userId, plant_id, plant_name, img_url);
+
+    await logActivity({userId, activity: `Created history entry for plant: ${plant_name}`,});
 
     return res.status(201).json({
       message: 'History entry created successfully.',
@@ -35,6 +38,8 @@ export const getHistoryByUserController = async (req: Request, res: Response) =>
     }
 
     const histories = await getHistoryByUser(userId);
+
+    await logActivity({userId, activity: 'Viewed their plant history'});
 
     return res.status(200).json({
       message: 'User history fetched successfully.',
