@@ -7,7 +7,7 @@ import { createPlantAdvisory, getAllPlantAdvisories, getPlantAdvisoryByIdControl
 const router = Router();
 
 router.post('/create-advisory', authenticateToken, Roles(UserRole.CUSTOMER),  createPlantAdvisory as any);
-router.get('/get-all-advisory', authenticateToken, Roles(UserRole.SPECIALIST),  getAllPlantAdvisories as any);
+router.get('/get-all-advisory', authenticateToken,  getAllPlantAdvisories as any);
 router.get('/get-advisory/:id', authenticateToken, Roles(UserRole.SPECIALIST),  getPlantAdvisoryByIdController as any);
 router.post('/update-status', authenticateToken, Roles(UserRole.SPECIALIST), updateAdvisoryStatus as any);
 router.post('/update-priority', authenticateToken, Roles(UserRole.SPECIALIST), updateAdvisoryPriority as any);

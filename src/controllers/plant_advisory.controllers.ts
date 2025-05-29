@@ -15,6 +15,8 @@ export const createPlantAdvisory = async (req: Request, res: Response) => {
     const customer_id = Number(req.user?.id);
     const { plant_name, request_type, status, priority } = req.body;
 
+    console.log("req.body",req.body);
+    
     if (!customer_id || isNaN(customer_id)) {
       return res.status(401).json({ error: 'Unauthorized: Invalid customer ID.' });
     }
@@ -23,13 +25,13 @@ export const createPlantAdvisory = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'All fields are required.' });
     }
 
-    if (!Object.values(Type).includes(request_type)) {
-      return res.status(400).json({ error: 'Invalid request_type value' });
-    }
+    // if (!Object.values(Type).includes(request_type)) {
+    //   return res.status(400).json({ error: 'Invalid request_type value' });
+    // }
 
-    if (!Object.values(Status).includes(status) || !Object.values(Status).includes(priority)) {
-      return res.status(400).json({ error: 'Invalid status or priority value' });
-    }
+    // if (!Object.values(Status).includes(status) || !Object.values(Status).includes(priority)) {
+    //   return res.status(400).json({ error: 'Invalid status or priority value' });
+    // }
 
     const advisory = await submitPlantAdvisory(
       plant_name,
