@@ -10,6 +10,7 @@ import userRoute  from './routes/user.routes';
 import contactUs  from './routes/contact_us.routes';
 import plantAdvisory  from './routes/plant_advisory.routes';
 import userFeedback  from './routes/feedback.routes';
+import activityLogs  from './routes/activity_logs.routes';
 
 import cors from 'cors';
 import path from 'path';
@@ -38,5 +39,6 @@ app.use('/api/users/', userRoute);
 app.use('/api/contact-us/', contactUs);
 app.use('/api/plant-advisory/', plantAdvisory);
 app.use('/api/feedback/', userFeedback);
+app.use('/api/logs/', activityLogs);
 
 export default app;
