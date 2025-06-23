@@ -60,6 +60,7 @@ export const fetchAllPlantAdvisories = async () => {
             firstName: true,
             lastName: true,
             email: true,
+            createdAt: true,
           },
         },
       },

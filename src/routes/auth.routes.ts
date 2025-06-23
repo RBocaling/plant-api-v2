@@ -11,7 +11,7 @@ router.post('/register', register as any);
 router.post('/login', login);
 router.post('/refresh-token', refreshAccessToken as any);
 router.get('/get-info', authenticateToken, getInfo as any);
-router.get('/get-users-list', authenticateToken, fetchAllCustomerUsers as any);
+router.get('/get-users-list', fetchAllCustomerUsers as any);
 router.get('/get-itadmin-list', authenticateToken, fetchAllAdminUsers as any);
 router.get('/get-admins-list', authenticateToken, fetchAllSubAdmin as any);
 router.post('/change-password', authenticateToken, Roles(UserRole.CUSTOMER),  updatePassword as any);
