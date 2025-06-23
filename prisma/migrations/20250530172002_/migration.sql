@@ -69,6 +69,7 @@ CREATE TABLE `PlantAdvisory` (
     `request_type` VARCHAR(191) NOT NULL,
     `status` VARCHAR(191) NOT NULL,
     `priority` VARCHAR(191) NOT NULL,
+    `response` VARCHAR(191) NULL,
     `userId` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
@@ -87,6 +88,17 @@ CREATE TABLE `Feedback` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- CreateTable
+CREATE TABLE `ActivityLog` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `userId` INTEGER NOT NULL,
+    `username` VARCHAR(191) NOT NULL,
+    `activity` VARCHAR(191) NOT NULL,
+    `timestamp` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 -- AddForeignKey
 ALTER TABLE `Support` ADD CONSTRAINT `Support_customer_id_fkey` FOREIGN KEY (`customer_id`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -101,3 +113,6 @@ ALTER TABLE `PlantAdvisory` ADD CONSTRAINT `PlantAdvisory_userId_fkey` FOREIGN K
 
 -- AddForeignKey
 ALTER TABLE `Feedback` ADD CONSTRAINT `Feedback_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `ActivityLog` ADD CONSTRAINT `ActivityLog_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
