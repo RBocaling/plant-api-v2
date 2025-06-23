@@ -40,7 +40,7 @@ export const makeResponse = async (id: number, response: string) => {
   try {
     const updated = await prisma.plantAdvisory.update({
       where: { id },
-      data: { response },
+      data: { response, status: 'RESOLVED', },
     });
 
     return updated;
@@ -81,6 +81,7 @@ export const getPlantAdvisoryById = async (id: number) => {
             firstName: true,
             lastName: true,
             email: true,
+            createdAt: true,
           },
         },
       },

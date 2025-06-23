@@ -132,5 +132,41 @@ model ActivityLog {
   timestamp DateTime @default(now())
 }
 
+model PlantCategory {
+  id        Int    @id @default(autoincrement())
+  name      String
+  imageUrl  String?
+  plants    PlantInfo[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PlantInfo {
+  id               Int            @id @default(autoincrement())
+  name             String
+  scientificName   String
+  genus            String
+  imageUrl         String?
+ description      String?        @db.Text
+  price            String?  
+  watering         String?
+  fertilizing      String?
+  note             String?        @db.Text
+  harvesting       String
+  categoryId       Int
+  category         PlantCategory    @relation(fields: [categoryId], references: [id])
+  galleryImages    PlantGallery[]
+ 
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+}
+
+model PlantGallery {
+  id        Int   @id @default(autoincrement())
+  imageUrl  String
+  plantId   Int
+  plant     PlantInfo  @relation(fields: [plantId], references: [id])
+}
+
 
 
