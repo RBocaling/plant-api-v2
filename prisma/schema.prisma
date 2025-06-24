@@ -137,6 +137,7 @@ model PlantCategory {
   name      String
   imageUrl  String?
   plants    PlantInfo[]
+  archived  Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -156,7 +157,7 @@ model PlantInfo {
   categoryId       Int
   category         PlantCategory    @relation(fields: [categoryId], references: [id])
   galleryImages    PlantGallery[]
- 
+  archived  Boolean  @default(false)
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
 }
@@ -166,6 +167,7 @@ model PlantGallery {
   imageUrl  String
   plantId   Int
   plant     PlantInfo  @relation(fields: [plantId], references: [id])
+  archived  Boolean  @default(false)
 }
 
 

@@ -2,31 +2,19 @@ import prisma from '../config/prisma';
 
 export const getAllPlantInfo = async () => {
   try {
-    const plants = await prisma.plantInfo.findMany({
-      include: {
-        category: {
-          select: { name: true },
-        },
-        galleryImages: {
-          select: {
-            imageUrl: true,
-            plantId: true,
-          },
-        },
+    return await prisma.plantInfo.findMany({
+       where: {
+        archived: false,
+      },
+       include: {
+        category: true,
+        galleryImages: true,
       },
     });
-
-    const formattedPlants = plants.map(({ updatedAt, category, ...rest }) => ({
-      ...rest,
-      categoryName: category.name,
-    }));
-
-    return formattedPlants;
   } catch (error) {
     throw new Error('Failed to fetch plant info.');
   }
 };
-
 
 export const getPlantInfoById = async (id: number) => {
   try {
@@ -125,11 +113,15 @@ export const updatePlantInfo = async (
 
 export const deletePlantInfo = async (id: number) => {
   try {
-    return await prisma.plantInfo.delete({ where: { id } });
+    return await prisma.plantInfo.update({
+      where: { id },
+      data: { archived: true },
+    });
   } catch (error) {
-    throw new Error('Failed to delete plant info.');
+    throw new Error('Failed to archive plant info.');
   }
 };
+
 
 export const deleteGalleryImage = async (id: number) => {
     try {

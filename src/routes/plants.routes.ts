@@ -10,14 +10,14 @@ const uploadImage = uploadPlantImages.fields([
   { name: 'image', maxCount: 1 },
   { name: 'galleryImages', maxCount: 10 }])
 //For Plant Info Routes
-router.get('/get-plants',  authenticateToken, Roles(UserRole.CUSTOMER), getPlants as any);
-router.get('/get-plants/:id',  authenticateToken, Roles(UserRole.CUSTOMER), getPlant as any);
-router.post('/add-plant', uploadImage,  authenticateToken, Roles(UserRole.CUSTOMER), addPlant as any
+router.get('/get-plants',  authenticateToken, getPlants as any);
+router.get('/get-plants/:id',  authenticateToken, getPlant as any);
+router.post('/add-plant', uploadImage,  authenticateToken, addPlant as any
 );
 
 router.put('/edit-plant/:id', uploadPlantImages.fields([
     { name: 'image', maxCount: 1 },
-    { name: 'galleryImages', maxCount: 10 }]), authenticateToken, Roles(UserRole.CUSTOMER), editPlant as any);
-router.delete('/:id',  authenticateToken, Roles(UserRole.CUSTOMER), removePlant);
+    { name: 'galleryImages', maxCount: 10 }]), authenticateToken, editPlant as any);
+router.delete('/delete-plant/:id',  authenticateToken, removePlant);
 
 export default router;

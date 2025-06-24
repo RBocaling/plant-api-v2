@@ -15,7 +15,7 @@ import { deleteGalleryImage } from '../services/plantInfo.services';
 import prisma from '../config/prisma'; 
 
 
-const uploadDir = path.join(__dirname, '..', '..', 'assets', 'images');
+const uploadDir = path.join(__dirname, '..', '..', 'uploads');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -65,6 +65,8 @@ export const getPlant = async (req: Request, res: Response) => {
 
 export const addPlant = async (req: Request, res: Response) => {
   try {
+     if (!req.body) return res.status(400).json({ message: 'Missing form data.' });
+     
     const {
       name,
       scientificName,

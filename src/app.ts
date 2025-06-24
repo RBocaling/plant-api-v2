@@ -30,7 +30,8 @@ app.use(
 );
 
 app.use('/images', express.static(path.join(__dirname, '..', 'assets', 'images')));
-    
+app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
+
 app.use('/api/auth', authRoutes);
 app.use('/api/plants/', plants);
 app.use('/api/forgot-password/', otp);
